@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LeleProperty.com - 3D Animated Registration</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            font-family: sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        nav {
+            background-color: #333;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            position: relative;
+        }
+
+        .logo {
+            font-size: 1.5em;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            font-family: 'Dancing Script', cursive;
+        }
+
+        .logo i {
+            margin-right: 10px;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .nav-links li {
+            margin-left: 20px;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            padding: 8px 12px;
+            transition: transform 0.3s ease-in-out;
+            transform-style: preserve-3d;
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-links a:hover {
+            transform: translateZ(5px);
+        }
+
+        .nav-links a i {
+            margin-right: 5px;
+        }
+
+        .nav-icons {
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-icons a {
+            color: white;
+            text-decoration: none;
+            margin-left: 15px;
+            transition: transform 0.3s ease-in-out;
+            transform-style: preserve-3d;
+        }
+
+        .nav-icons a:hover {
+            transform: translateZ(5px) rotateY(180deg);
+        }
+
+        .menu-toggle {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+        }
+
+        .bar {
+            width: 25px;
+            height: 3px;
+            background-color: white;
+            margin: 3px 0;
+            transition: 0.4s;
+        }
+
+        .mobile-menu {
+            display: none;
+            position: absolute;
+            top: 60px;
+            left: 0;
+            width: 100%;
+            background-color: #333;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px 0;
+            z-index: 10;
+        }
+
+        .mobile-menu.active {
+            display: flex;
+        }
+
+        .mobile-menu a {
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            width: 100%;
+            text-align: center;
+            transition: transform 0.3s ease-in-out;
+            transform-style: preserve-3d;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .mobile-menu a:hover {
+            transform: translateZ(5px);
+        }
+
+        .mobile-menu a i {
+            margin-right: 5px;
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .menu-toggle {
+                display: flex;
+            }
+
+            .menu-toggle.active .bar:nth-child(1) {
+                transform: rotate(-45deg) translate(-5px, 6px);
+            }
+
+            .menu-toggle.active .bar:nth-child(2) {
+                opacity: 0;
+            }
+
+            .menu-toggle.active .bar:nth-child(3) {
+                transform: rotate(45deg) translate(-5px, -6px);
+            }
+        }
+
+        .registration-container {
+            width: 300px;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            perspective: 1000px;
+            margin: 50px auto;
+        }
+
+        .registration-container:before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #ff0000, #ff7300, #fffb00, #48ff00, #00ffd5, #002bff, #7a00ff, #ff00c8, #ff0000);
+            z-index: -1;
+            border-radius: 10px;
+            background-size: 400%;
+            animation: glowing 20s linear infinite;
+        }
+
+        @keyframes glowing {
+            0% {
+                background-position: 0 0;
+            }
+            50% {
+                background-position: 400% 0;
+            }
+            100% {
+                background-position: 0 0;
+            }
+        }
+
+        .registration-container h2 {
+            text-align: center;
+            color: white;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .input-group label {
+            color: white;
+            display: block;
+            margin-bottom: 5px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        .input-group input {
+            width: calc(100% - 22px);
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            outline: none;
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .input-group input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .input-group i {
+            position: absolute;
+            top: 50%;
+            right: 10px;
+            transform: translateY(-50%);
+            color: white;
+        }
+
+        .registration-button {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background: linear-gradient(to right, #00b09b, #96c93d);
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .registration-button:hover {
+            transform: scale(1.05);
+        }
+
+        .registration-container:hover {
+            transform: rotateY(5deg) rotateX(5deg);
+            transition: transform 0.5s ease;
+        }
+
+        .footer-section {
+            background: linear-gradient(45deg, #1c1c1c, #3c3c3c, #1c1c1c);
+            color: #fff;
+            padding: 40px 0;
+            text-align: center;
+            width: 100%;
+            position: relative;
+            bottom: 0;
+            animation: footerGlowAnimation 3s infinite alternate;
+        }
+
+        .footer-container {
+            max-width: 800px;
+            margin: auto;
+            transform: perspective(500px) rotateX(10deg);
+            animation: footerFloatAnimation 4s infinite ease-in-out;
+        }
+
+        .footer-title {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .footer-text {
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .footer-link {
+            color: #fff;
+            text-decoration: none;
+            font-size: 18px;
+            transition: transform 0.3s ease-in-out, color 0.3s ease-in-out;
+        }
+
+        .footer-social-icons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        .footer-icon {
+            transition: transform 0.3s ease-in-out, color 0.3s ease-in-out;
+            cursor: pointer;
+        }
+
+        .footer-copyright {
+            font-size: 14px;
+        }
+
+        @keyframes footerGlowAnimation {
+            0% {
+                box-shadow: 0 0 10px #1c1c1c;
+            }
+            100% {
+                box-shadow: 0 0 20px #3c3c3c;
+            }
+        }
+
+        @keyframes footerFloatAnimation {
+            0% {
+                transform: perspective(500px) rotateX(10deg) translateY(0);
+            }
+            50% {
+                transform: perspective(500px) rotateX(10deg) translateY(-10px);
+            }
+            100% {
+                transform: perspective(500px) rotateX(10deg) translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="logo"><i class="fas fa-building"></i> LeleProperty.com</div>
+        <ul class="nav-links">
+            <li><a href="/"><i class="fas fa-home"></i> Home</a></li>
+            <li><a href="/productlist"><i class="fas fa-city"></i> Our Property</a></li>
+            <li><a href="#"><i class="fas fa-tools"></i> Our Service</a></li>
+            <li><a href="#"><i class="fas fa-envelope"></i> Contact Us</a></li>
+        </ul>
+        <div class="nav-icons">
+            <a href="/login"><i class="fas fa-sign-in-alt"></i> Login</a>
+            <a href="/registration"><i class="fas fa-user-plus"></i> Signup</a>
+        </div>
+        <div class="menu-toggle">
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+        </div>
+        <div class="mobile-menu">
+            <a href="/"><i class="fas fa-home"></i> Home</a>
+            <a href="/productlist"><i class="fas fa-city"></i> Our Property</a>
+            <a href="#"><i class="fas fa-tools"></i> Our Service</a>
+            <a href="#"><i class="fas fa-envelope"></i> Contact Us</a>
+            <a href="/login"><i class="fas fa-sign-in-alt"></i> Login</a>
+            <a href="/registration"><i class="fas fa-user-plus"></i> Signup</a>
+        </div>
+    </nav>
+
+    <div class="registration-container">
+        <h2>Register</h2>
+        <div class="input-group">
+            <label for="username">Username</label>
+            <input type="text" id="username" placeholder="Enter your username">
+            <i class="fas fa-user"></i>
+        </div>
+        <div class="input-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" placeholder="Enter your password">
+            <i class="fas fa-lock"></i>
+        </div>
+        <div class="input-group">
+            <label for="confirmPassword">Confirm Password</label>
+            <input type="password" id="confirmPassword" placeholder="Confirm your password">
+            <i class="fas fa-lock"></i>
+        </div>
+        <button class="registration-button" id="registerButton">Register</button>
+    </div>
+
+    <div class="footer-section">
+        <div class="footer-container">
+            <h2 class="footer-title">PropertyLelo</h2>
+            <p class="footer-text">Your one-stop solution for buying, selling, and renting properties.</p>
+            <div class="footer-links">
+                <a href="#home" class="footer-link">Home</a>
+                <a href="#services" class="footer-link">Services</a>
+                <a href="#projects" class="footer-link">Projects</a>
+                <a href="#about" class="footer-link">About Us</a>
+                <a href="#contact" class="footer-link">Contact</a>
+            </div>
+            <div class="footer-social-icons">
+                <span class="footer-icon">📘</span>
+                <span class="footer-icon">🐦</span>
+                <span class="footer-icon">📸</span>
+                <span class="footer-icon">💼</span>
+            </div>
+            <p class="footer-copyright">© 2025 PropertyLelo. All rights reserved.</p>
+        </div>
+    </div>
+
+    <script>
+        const menuToggle = document.querySelector('.menu-toggle');
+        const mobileMenu = document.querySelector('.mobile-menu');
+
+        menuToggle.addEventListener('click', () => {
+            menuToggle.classList.toggle('active');
+            mobileMenu.classList.toggle('active');
+        });
+
+        document.getElementById('registerButton').addEventListener('click', async () => {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            if (password !== confirmPassword) {
+                alert("Passwords do not match.");
+                return;
+            }
+
+            const userData = {
+                username: username,
+                password: password,
+                confirmPassword: confirmPassword,
+            };
+
+            try {
+                const response = await fetch('/api/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(userData),
+                });
+
+                if (response.ok) {
+                    alert('Registration successful!');
+                    window.location.href = '/login';
+                } else {
+                    const errorData = await response.text();
+                    alert(`Registration failed: ${errorData}`);
+                }
+            } catch (error) {
+                console.error('Error during registration:', error);
+                alert('An error occurred during registration.');
+            }
+        });
+    </script>
+</body>
+</html>
