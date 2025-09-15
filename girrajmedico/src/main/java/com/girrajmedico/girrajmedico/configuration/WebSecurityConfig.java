@@ -76,14 +76,14 @@ public class WebSecurityConfig {
                 .anyRequest().authenticated()
 )
             .formLogin(form -> form
-                .loginPage("http://localhost:3000/login")
+                .loginPage("http://girrajmedicare.com/login")  //http://localhost:3000/login
                 .loginProcessingUrl("/api/login")
                 .successHandler(successHandler) // Your existing login success handler
                 .permitAll()
             )
             .logout(logout -> logout
                 .logoutUrl("/logout")
-                .logoutSuccessUrl("http://localhost:3000/") // Redirect to login page after successful logout
+                .logoutSuccessUrl("http://girrajmedicare.com/") // Redirect to login page after successful logout
                 .invalidateHttpSession(true)  // Invalidate the session after logout
                 .clearAuthentication(true)  // Clear authentication on logout
                 .permitAll()
@@ -96,7 +96,7 @@ public class WebSecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(Collections.singletonList("http://localhost:3000")); // Allow frontend domain
+        config.setAllowedOrigins(Collections.singletonList("http://girrajmedicare.com")); // Allow frontend domain
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(Arrays.asList("Content-Type", "Authorization"));
         config.setAllowCredentials(true); // Allow credentials (cookies, auth headers)
