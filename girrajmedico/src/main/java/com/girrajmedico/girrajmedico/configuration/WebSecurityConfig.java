@@ -66,7 +66,9 @@ public class WebSecurityConfig {
                     "/api/register",
                     "/api/docregister",
                     "/api/getAllMedicine",
-                    "/**"
+                    "/**",
+                    "/test"
+                    
                     
                     
                       ).permitAll()
@@ -76,14 +78,14 @@ public class WebSecurityConfig {
                 .anyRequest().authenticated()
 )
             .formLogin(form -> form
-                .loginPage("http://girrajmedicare.com/login")  //http://localhost:3000/login
+                .loginPage("https://girrajmedicare.com/login")  //http://localhost:3000/login
                 .loginProcessingUrl("/api/login")
                 .successHandler(successHandler) // Your existing login success handler
                 .permitAll()
             )
             .logout(logout -> logout
                 .logoutUrl("/logout")
-                .logoutSuccessUrl("http://girrajmedicare.com/") // Redirect to login page after successful logout
+                .logoutSuccessUrl("https://girrajmedicare.com/") // Redirect to login page after successful logout
                 .invalidateHttpSession(true)  // Invalidate the session after logout
                 .clearAuthentication(true)  // Clear authentication on logout
                 .permitAll()
@@ -96,10 +98,14 @@ public class WebSecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(Collections.singletonList("http://girrajmedicare.com")); // Allow frontend domain
+        config.setAllowedOrigins(Arrays.asList(
+        		"https://68cfa656150fee57c3b2af0e--peaceful-manatee-07e3ef.netlify.app",
+            "https://girrajmedicare.com", // Your production frontend
+            "http://localhost:3000" // Optional: for local development
+        ));
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        config.setAllowedHeaders(Arrays.asList("Content-Type", "Authorization"));
-        config.setAllowCredentials(true); // Allow credentials (cookies, auth headers)
+        config.setAllowedHeaders(Collections.singletonList("*")); // Allow all headers
+        config.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
