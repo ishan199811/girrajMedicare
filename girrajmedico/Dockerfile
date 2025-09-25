@@ -6,7 +6,7 @@ WORKDIR /app
 
 # Copy the executable JAR file from your build output to the container
 # NOTE: Replace 'your-app-name.jar' with the actual name of your Spring Boot JAR file
-COPY target/your-app-name.jar app.jar
+COPY target/girrajmedico-0.0.1-SNAPSHOT.jar app.jar
 
 # Expose the port that the application will run on
 # Spring Boot's default port is 8080
