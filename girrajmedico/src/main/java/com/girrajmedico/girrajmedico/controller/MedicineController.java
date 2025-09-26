@@ -24,6 +24,11 @@ MedicineService medicineService;
     	 return ResponseEntity.ok(medicineService.getAllMedicine());
         }
 
+	@GetMapping("/url")
+    public ResponseEntity<?> getAllMedicineUrl() {
+    	return ResponseEntity.ok( "This is medicine List");
+        }
+
 
 
 }
