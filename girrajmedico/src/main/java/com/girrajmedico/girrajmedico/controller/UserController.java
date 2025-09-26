@@ -3,6 +3,7 @@ package com.girrajmedico.girrajmedico.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -14,6 +15,7 @@ import com.girrajmedico.girrajmedico.model.dao.User;
 import com.girrajmedico.girrajmedico.model.request.RegistrationRequest;
 import com.girrajmedico.girrajmedico.service.UserService;
 
+@CrossOrigin(origins = "*") // Allow all origins// Allow requests from React
 @RestController
 @RequestMapping("/user")
 public class UserController {
