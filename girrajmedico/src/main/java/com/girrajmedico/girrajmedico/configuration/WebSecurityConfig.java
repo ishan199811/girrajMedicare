@@ -66,6 +66,7 @@ public class WebSecurityConfig {
                     "/api/register",
                     "/api/docregister",
                     "/api/getAllMedicine",
+                    "/user/loggeduser",
                     "/**",
                     "/test"
                     
