@@ -14,10 +14,12 @@ public class Medicine {
 	    @GeneratedValue(strategy = GenerationType.IDENTITY)
 	    private Long id;
 	
+  @Column(name = "name")
 	String medicineName;
 	
 	double price;
 	
+	@Column(name = "type")
 	String medineType;
 	
 	String description;
