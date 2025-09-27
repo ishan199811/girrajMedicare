@@ -26,6 +26,59 @@ public class Medicine {
 	
 	double discountPercentage;
 	
+	private String isDiscontinued;
+	
+	private String manufacturerName;
+	
+	public String getIsDiscontinued() {
+		return isDiscontinued;
+	}
+
+	public void setIsDiscontinued(String isDiscontinued) {
+		this.isDiscontinued = isDiscontinued;
+	}
+
+	public String getManufacturerName() {
+		return manufacturerName;
+	}
+
+	public void setManufacturerName(String manufacturerName) {
+		this.manufacturerName = manufacturerName;
+	}
+
+	public String getPackSizeLabel() {
+		return packSizeLabel;
+	}
+
+	public void setPackSizeLabel(String packSizeLabel) {
+		this.packSizeLabel = packSizeLabel;
+	}
+
+	public String getShortComposition1() {
+		return shortComposition1;
+	}
+
+	public void setShortComposition1(String shortComposition1) {
+		this.shortComposition1 = shortComposition1;
+	}
+
+	public String getShortComposition2() {
+		return shortComposition2;
+	}
+
+	public void setShortComposition2(String shortComposition2) {
+		this.shortComposition2 = shortComposition2;
+	}
+
+	private String packSizeLabel;
+
+    
+
+    private String shortComposition1;
+
+   
+    private String shortComposition2;
+	
 	double descountPrice;
 	public double getDiscountPercentage() {
 		return discountPercentage;
