@@ -25,10 +25,8 @@ public class AiController {
 	
 	@GetMapping("/aiResponse")
 	public ResponseEntity<String> getResponse(@RequestParam(value="inputText")String inputText){
-//		System.out.print("Hello Dev");
-//		System.out.print("Hello AI");
-		//String response=aiService.getAiResponse(inputText);
+		String response=aiService.getAiResponse(inputText);
 		
-		return ResponseEntity.ok(inputText);
+		return ResponseEntity.ok(response);
 	}
 }
