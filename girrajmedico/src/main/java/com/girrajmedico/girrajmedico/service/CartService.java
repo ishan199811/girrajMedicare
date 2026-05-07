@@ -3,6 +3,8 @@ package com.girrajmedico.girrajmedico.service;
 import java.util.List;
 import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,88 +19,120 @@ import com.girrajmedico.girrajmedico.repository.CartMasterRepository;
 import com.girrajmedico.girrajmedico.repository.MedicineRepository;
 import com.girrajmedico.girrajmedico.repository.UserRepository;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Service
 public class CartService {
 
-	
-	@Autowired
-	CartMasterRepository cartRepository;
+    @Autowired
+    CartMasterRepository cartRepository;
 
-	@Autowired
-	UserRepository userRepository;
-	
-	@Autowired
-	MedicineRepository medicineRepository;
-	
-	
-	public ResponseEntity<?> saveProductInCart(Long id, int quantity) {
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    @Autowired
+    UserRepository userRepository;
 
-	    if (authentication != null && authentication.isAuthenticated()) {
-	        User user = userRepository.getUserByUsername(authentication.getName());
-	        Optional<Medicine> medicineOpt = medicineRepository.findById(id);
+    @Autowired
+    MedicineRepository medicineRepository;
+    
+    
+ // 2. Add this line manually. This creates the 'log' variable.
+    private static final Logger log = LoggerFactory.getLogger(CartService.class);
 
-	        if (medicineOpt.isEmpty()) {
-	            return ResponseEntity.badRequest().body("Invalid medicine ID");
-	        }
+    public ResponseEntity<?> saveProductInCart(Long medicineId, int quantity) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-	        Medicine medicine = medicineOpt.get();
-	        CartMaster existingCart = cartRepository.findByLoginIdAndMedicine(user, medicine);
+        if (authentication != null && authentication.isAuthenticated() && !"anonymousUser".equals(authentication.getName())) {
+            
+            String username = authentication.getName();
+            User user = userRepository.getUserByUsername(username);
 
-	        if (existingCart != null) {
-	            // If already in cart, just update the quantity
-	            existingCart.setQuantity(existingCart.getQuantity() + quantity);
-	            cartRepository.save(existingCart);
-	            return ResponseEntity.ok("Medicine quantity updated in your cart");
-	        } else {
-	            // Create new cart item
-	            CartMaster cart = new CartMaster();
-	            cart.setLoginId(user);
-	            cart.setMedicine(medicine);
-	            cart.setQuantity(quantity);
-	           
-	            
-	            cart.setTotal(medicine.getPrice() * quantity);
-	            cart.setDiscountedPrice(medicine.getDescountPrice()*quantity);
-	            cartRepository.save(cart);
-	            return ResponseEntity.ok("Medicine added to your cart");
-	        }
-	    }
+            if (user == null) {
+                log.warn("Unauthorized cart access attempt: User '{}' not found in database", username);
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User account not found.");
+            }
 
-	    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("You must be logged in to add items to the cart");
-	}
+            Optional<Medicine> medicineOpt = medicineRepository.findById(medicineId);
+            if (medicineOpt.isEmpty()) {
+                log.error("Cart Update Failed: Medicine ID {} does not exist. User: {}", medicineId, username);
+                return ResponseEntity.badRequest().body("Invalid medicine ID");
+            }
 
-	public ResponseEntity<?> getAllProductOfUser() {
-	    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            Medicine medicine = medicineOpt.get();
+            CartMaster existingCart = cartRepository.findByLoginIdAndMedicine(user, medicine);
 
-	    if (authentication != null && authentication.isAuthenticated() &&
-	        !authentication.getPrincipal().equals("anonymousUser")) {
+            if (existingCart != null) {
+                log.info("Updating existing cart item for user: {}. Medicine: {}, Adding quantity: {}", 
+                         username, medicine.getMedicineName(), quantity);
+                         
+                existingCart.setQuantity(existingCart.getQuantity() + quantity);
+                existingCart.setTotal(medicine.getPrice() * existingCart.getQuantity());
+                existingCart.setDiscountedPrice(medicine.getDescountPrice() * existingCart.getQuantity());
+                
+                cartRepository.save(existingCart);
+                return ResponseEntity.ok("Medicine quantity updated in your cart");
+            } else {
+                log.info("Creating new cart entry for user: {}. Medicine: {}, Quantity: {}", 
+                         username, medicine.getMedicineName(), quantity);
+                         
+                CartMaster cart = new CartMaster();
+                cart.setLoginId(user); 
+                cart.setMedicine(medicine);
+                cart.setQuantity(quantity);
+                cart.setTotal(medicine.getPrice() * quantity);
+                cart.setDiscountedPrice(medicine.getDescountPrice() * quantity);
+                
+                cartRepository.save(cart);
+                return ResponseEntity.ok("Medicine added to your cart");
+            }
+        }
 
-	        User user = userRepository.getUserByUsername(authentication.getName());
+        log.warn("Unauthenticated request to save product to cart for Medicine ID: {}", medicineId);
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("You must be logged in");
+    }
 
-	        List<CartMaster> cartList = cartRepository.findAllByLoginId(user);
+    public ResponseEntity<?> getAllProductOfUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        log.debug("Fetched {} cart items for user: {}",authentication.getName() );
+        if (authentication != null && authentication.isAuthenticated() && !"anonymousUser".equals(authentication.getName())) {
 
-	        return ResponseEntity.ok(cartList);
-	    } else {
-	        return ResponseEntity
-	                .status(HttpStatus.UNAUTHORIZED)
-	                .body("You need to be logged in to view your cart.");
-	    }
-	}
+            String username = authentication.getName();
+            User user = userRepository.getUserByUsername(username);
+           
+            if (user == null) {
+                log.error("User context found but user '{}' missing from database", username);
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not found.");
+            }
 
-	public boolean deleteCartProductById(Long id) {
-		cartRepository.deleteById(id);
-		return false;
-	}
+            List<CartMaster> cartList = cartRepository.findAllByLoginId(user);
+            log.debug("Fetched {} cart items for user: {}", cartList.size(), username);
 
-	public ResponseEntity<?> getProductDetail(Long id) {
-		// TODO Auto-generated method stub
-		Optional<Medicine> medicine=medicineRepository.findById(id);
-		
-		return ResponseEntity.ok(medicine.get());
-	}
+            return ResponseEntity.ok(cartList);
+        } else {
+            log.info("Guest user attempted to view cart products");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Please log in to view cart.");
+        }
+    }
 
+    public boolean deleteCartProductById(Long id) {
+        log.info("Deleting cart item with ID: {}", id);
+        try {
+            cartRepository.deleteById(id);
+            return true;
+        } catch (Exception e) {
+            log.error("Failed to delete cart item ID {}: {}", id, e.getMessage());
+            return false;
+        }
+    }
 
-
-
+    public ResponseEntity<?> getProductDetail(Long id) {
+        log.debug("Fetching medicine details for ID: {}", id);
+        Optional<Medicine> medicine = medicineRepository.findById(id);
+        
+        if (medicine.isPresent()) {
+            return ResponseEntity.ok(medicine.get());
+        } else {
+            log.warn("Product details requested for non-existent ID: {}", id);
+            return ResponseEntity.notFound().build();
+        }
+    }
 }
