@@ -2,8 +2,8 @@ FROM maven:3.9.6-eclipse-temurin-17 AS build
 
 WORKDIR /app
 
-# copy ONLY correct folder where pom.xml exists
-COPY girrajmedico/girrajmedico/girrajMedicare/girrajmedico/ .
+# Copy project files where pom.xml exists
+COPY girrajMedicare/girrajmedico/ .
 
 RUN mvn clean package -DskipTests
 
