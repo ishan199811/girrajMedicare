@@ -1,17 +1,18 @@
-# Use a lightweight OpenJDK base image for the build
-FROM eclipse-temurin:17-jdk-jammy
+FROM maven:3.9.6-eclipse-temurin-17 AS build
 
-# Set the working directory inside the container
 WORKDIR /app
 
-# Copy the executable JAR file from your build output to the container
-# NOTE: Replace 'your-app-name.jar' with the actual name of your Spring Boot JAR file
-COPY target/girrajmedico-0.0.1-SNAPSHOT.jar app.jar
+# Copy project files where pom.xml exists
+COPY girrajMedicare/girrajmedico/ .
 
-# Expose the port that the application will run on
-# Spring Boot's default port is 8080
+RUN mvn clean package -DskipTests
+
+FROM eclipse-temurin:17-jdk-jammy
+
+WORKDIR /app
+
+COPY --from=build /app/target/*.jar app.jar
+
 EXPOSE 8080
 
-# Define the command to run the application
-# This command will be executed when the container starts
 CMD ["java", "-jar", "app.jar"]
