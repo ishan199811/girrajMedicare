@@ -1,5 +1,6 @@
 package com.girrajmedico.girrajmedico.service;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -87,18 +88,48 @@ public class MedicineService {
 		}
 		// Or throw an exception if medicine not found
 	}
-	/**
-	 * Filters medicines based on name, composition, and price range.
-	 */
-	public ResponseEntity<?> filterMedicines(String name, String composition, Double minPrice, Double maxPrice, int page, int size) {
-		Pageable pageable = PageRequest.of(page, size);
-		Page<Medicine> medicinePage = medicineRepository.filterMedicines(name, composition, minPrice, maxPrice, pageable);
-		
-		if (medicinePage.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No medicines found matching the criteria.");
-		}
-		
-		return ResponseEntity.ok(medicinePage);
+	public ResponseEntity<?> filterMedicines(
+	        String name,
+	        String composition,
+	        Double minPrice,
+	        Double maxPrice,
+	        int page,
+	        int size
+	) {
+
+	    Pageable pageable = PageRequest.of(page, size);
+
+	    Page<Medicine> medicinePage =
+	            medicineRepository.filterMedicines(
+	                    name,
+	                    composition,
+	                    minPrice,
+	                    maxPrice,
+	                    pageable
+	            );
+
+	    // Filter medicines starting with searched alphabet
+	    List<Medicine> filteredMedicines = medicinePage.getContent()
+	            .stream()
+	            .filter(medicine -> {
+	                if (name == null || name.trim().isEmpty()) {
+	                    return true;
+	                }
+
+	                return medicine.getMedicineName() != null &&
+	                        medicine.getMedicineName()
+	                                .toLowerCase()
+	                                .startsWith(name.toLowerCase());
+	            })
+	            .toList();
+
+	    if (filteredMedicines.isEmpty()) {
+	        return ResponseEntity
+	                .status(HttpStatus.NOT_FOUND)
+	                .body("No medicines found matching the criteria.");
+	    }
+
+	    return ResponseEntity.ok(filteredMedicines);
 	}
 	/**
 	 * Calculates the percentage of a given real amount.
