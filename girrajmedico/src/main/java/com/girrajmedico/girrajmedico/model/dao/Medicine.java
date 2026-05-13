@@ -153,12 +153,20 @@ public class Medicine {
 		this.expiryDate = expiryDate;
 	}
 
+	public String getImageUrl() {
+		return imageUrl;
+	}
+
+	public void setImageUrl(String imageUrl) {
+		this.imageUrl = imageUrl;
+	}
+
 	double totalPiece;
 	
 	String expiryDate;
 	
-	
-	
+	@Column(name = "image_url")
+	private String imageUrl;
 	
 	
 
