@@ -63,10 +63,10 @@ public class MedicineService {
 		medicine.setMedineType(medicineDetails.getMedineType());  
 		medicine.setExpiryDate(medicineDetails.getExpiryDate());
 		medicine.setTotalPiece(medicineDetails.getTotalPiece());
+		medicine.setImageUrl(medicineDetails.getImageUrl());
 		medicineRepository.save(medicine);
 		return ResponseEntity.ok("Medicine updated successfully");
 	}
-
 	public ResponseEntity<?> deletMedicine(Long id){
 		if (!medicineRepository.existsById(id)) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Medicine not found");
